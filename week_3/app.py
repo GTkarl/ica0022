@@ -1,14 +1,13 @@
 import json
 
-APP_VERSION = "0.1.0"
+APP_VERSION = "1.0.0"
 MESSAGE = "Hello from week 3, build cache"
-
 
 def app(environ, start_response):
     if environ.get("PATH_INFO", "/") == "/":
         status = "200 OK"
         payload = {
-            "application": "course-app",
+            "application": "ica0022",
             "version": APP_VERSION,
             "message": MESSAGE,
         }
