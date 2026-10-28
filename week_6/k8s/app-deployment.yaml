@@ -20,26 +20,26 @@ spec:
           image: ica0022:v1.2.0
           ports:
             - containerPort: 8080
-          env:
-            - name: DB_HOST
-              value: db
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_NAME
-              value: ica0022
-            - name: DB_USER
-              value: ica0022
-            - name: DB_PASSWORD
-              value: ica0022-pass
-#          livenessProbe:
-#            httpGet:
-#              path: TODO
-#              port: TODO
-#            initialDelaySeconds: TODO
-#            periodSeconds: TODO
-#          readinessProbe:
-#            httpGet:
-#              path: TODO
-#              port: TODO
-#            periodSeconds: TODO
-#            failureThreshold: TODO
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: db-credentials
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 50m
+            limits:
+              memory: 256Mi
