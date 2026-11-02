@@ -1,19 +1,27 @@
 replicaCount: 3
 
 image:
-  repository: "609722444275.dkr.ecr.eu-north-1.amazonaws.com/students/uniid"
-  tag: "1.2.0"
+  repository: "609722444275.dkr.ecr.eu-north-1.amazonaws.com/students/kapiks"
+  tag: "v1.2.0"
 
-# TODO non-secret configuration, rendered into a ConfigMap and loaded with envFrom.
-config: {}
+config:
+  DB_HOST: db
+  DB_PORT: "5432"
+  DB_NAME: ica0022
+  DB_USER: ica0022
 
 dbCredentials: db-credentials
 
-# TODO_ADD_PROBES
-probes: {}
+probes:
+  livenessPath: /healthz
+  readinessPath: /readyz
 
-# TODO_DEFINE_RESOURCE_REQUESTS
-resources: {}
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    memory: 256Mi
 
 service:
   port: 8080
@@ -30,7 +38,26 @@ ingress:
 # .Values.fullnameOverride, .Values.auth, .Values.persistence, and so on.
 postgresql:
   enabled: true
-  # TODO_POSTGRESQL_CONFIGURATION
+
+  fullnameOverride: db
+
+  auth:
+    database: ica0022
+    username: ica0022
+    secretKey: POSTGRES_PASSWORD
+    existingSecret: db-credentials
+
+  persistence:
+    enabled: true
+    subpath: pgdata
+    size: 1Gi
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+     memory: 512Mi
 
   initdb:
     scripts:
